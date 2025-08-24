@@ -1,0 +1,119 @@
+{
+  "id": "order-new-single-001",
+  "name": "新订单创建场景",
+  "description": "测试新订单单条创建流程",
+  "category": "business",
+  "tags": ["order", "new-order-single", "creation"],
+  "configuration": {
+    "quickfixConfig": "acceptor.cfg",
+    "initialSeqNum": 1,
+    "loginState": "logged_in",
+    "timeout": 60000
+  },
+  "setup": [
+    {
+      "action": "ensure_logged_in",
+      "parameters": {
+        "maxRetries": 3
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "1",
+      "name": "发送新订单",
+      "type": "send",
+      "message": {
+        "type": "NEWORDERSINGLE",
+        "fields": {
+          "ClOrdID": "ORDER-${timestamp}",
+          "Symbol": "AAPL",
+          "Side": "1",
+          "OrderQty": 100,
+          "Price": 150.5,
+          "OrdType": "2",
+          "TransactTime": "${current_time}",
+          "Currency": "USD"
+        },
+        "variables": {
+          "timestamp": "${System.currentTimeMillis()}",
+          "current_time": "${new Date()}"
+        }
+      },
+      "timeout": 5000
+    },
+    {
+      "id": "2",
+      "name": "接收执行报告",
+      "type": "receive",
+      "timeout": 10000,
+      "retry": {
+        "maxAttempts": 3,
+        "delay": 1000,
+        "backoff": "exponential"
+      },
+      "validation": {
+        "rules": [
+          {
+            "field": "MsgType",
+            "operator": "equals",
+            "value": "8",
+            "required": true
+          },
+          {
+            "field": "ExecType",
+            "operator": "equals",
+            "value": "0",
+            "required": true
+          },
+          {
+            "field": "OrdStatus",
+            "operator": "equals",
+            "value": "0",
+            "required": true
+          },
+          {
+            "field": "ClOrdID",
+            "operator": "matches",
+            "value": "ORDER-\\d+",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "3",
+      "name": "验证订单状态",
+      "type": "validate",
+      "validation": {
+        "rules": [
+          {
+            "field": "LeavesQty",
+            "operator": "equals",
+            "value": 100,
+            "required": true
+          }
+        ]
+      }
+    }
+  ],
+  "cleanup": [
+    {
+      "action": "cancel_all_orders",
+      "parameters": {}
+    }
+  ],
+  "expected": {
+    "sessionState": "logged_in",
+    "messages": [
+      {
+        "type": "EXECUTIONREPORT",
+        "fields": {
+          "ExecType": "0",
+          "OrdStatus": "0"
+        },
+        "timing": "immediate"
+      }
+    ]
+  }
+}

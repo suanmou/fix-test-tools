@@ -1,0 +1,101 @@
+{
+  "id": "login-scenario-001",
+  "name": "标准登录场景",
+  "description": "测试标准FIX协议登录流程",
+  "category": "session",
+  "tags": ["login", "session", "standard"],
+  "configuration": {
+    "quickfixConfig": "acceptor.cfg",
+    "sessionSettings": {
+      "SocketAcceptPort": "9876",
+      "SocketAcceptAddress": "0.0.0.0",
+      "StartTime": "00:00:00",
+      "EndTime": "23:59:59"
+    },
+    "initialSeqNum": 1,
+    "loginState": "disconnected",
+    "timeout": 30000
+  },
+  "setup": [
+    {
+      "action": "initialize_session",
+      "parameters": {
+        "sessionType": "acceptor",
+        "resetOnLogon": true
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "1",
+      "name": "发送登录请求",
+      "type": "send",
+      "message": {
+        "type": "LOGON",
+        "fields": {
+          "EncryptMethod": 0,
+          "HeartBtInt": 30,
+          "ResetSeqNumFlag": true,
+          "Username": "test_user",
+          "Password": "test_pass"
+        }
+      },
+      "timeout": 5000
+    },
+    {
+      "id": "2",
+      "name": "接收登录响应",
+      "type": "receive",
+      "timeout": 5000,
+      "validation": {
+        "rules": [
+          {
+            "field": "MsgType",
+            "operator": "equals",
+            "value": "A",
+            "required": true
+          },
+          {
+            "field": "EncryptMethod",
+            "operator": "equals",
+            "value": 0,
+            "required": true
+          },
+          {
+            "field": "HeartBtInt",
+            "operator": "equals",
+            "value": 30,
+            "required": true
+          }
+        ],
+        "assertions": [
+          {
+            "type": "session_state",
+            "expected": "logged_in"
+          }
+        ]
+      }
+    }
+  ],
+  "cleanup": [
+    {
+      "action": "logout",
+      "parameters": {
+        "graceful": true
+      }
+    }
+  ],
+  "expected": {
+    "sessionState": "logged_in",
+    "messages": [
+      {
+        "type": "LOGON",
+        "fields": {
+          "EncryptMethod": 0,
+          "HeartBtInt": 30
+        },
+        "timing": "immediate"
+      }
+    ]
+  }
+}

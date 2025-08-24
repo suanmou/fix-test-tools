@@ -1,0 +1,61 @@
+{
+  "id": "order-004",
+  "name": "订单状态查询测试",
+  "description": "测试查询订单状态的完整流程",
+  "metadata": {
+    "version": "1.0",
+    "author": "测试团队",
+    "tags": ["order", "status", "query"]
+  },
+  "configuration": {
+    "quickfixConfig": "config/initiator.cfg",
+    "role": "initiator",
+    "initialSeqNum": 1,
+    "expectedDuration": 30000
+  },
+  "sequence": [
+    {
+      "action": "WAIT_LOGIN",
+      "parameters": {
+        "expectedState": "LOGGED_ON"
+      },
+      "timeout": 10000
+    },
+    {
+      "action": "SEND_NEW_ORDER",
+      "parameters": {
+        "clOrdID": "ORDER-2024-004",
+        "symbol": "TSLA",
+        "side": "1",
+        "orderQty": "75",
+        "ordType": "2",
+        "price": "250.00"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "ORDER-2024-004",
+          "39": "0"
+        }
+      }
+    },
+    {
+      "action": "SEND_ORDER_STATUS",
+      "parameters": {
+        "clOrdID": "STATUS-2024-004",
+        "origClOrdID": "ORDER-2024-004",
+        "symbol": "TSLA",
+        "side": "1"
+      },
+      "timeout": 3000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "STATUS-2024-004",
+          "39": "0"
+        }
+      }
+    }
+  ]
+}

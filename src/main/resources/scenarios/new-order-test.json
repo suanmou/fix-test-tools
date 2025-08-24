@@ -1,0 +1,57 @@
+{
+  "id": "order-001",
+  "name": "新订单创建测试",
+  "description": "测试创建新订单的完整流程",
+  "metadata": {
+    "version": "1.0",
+    "author": "测试团队",
+    "tags": ["order", "new", "flow"]
+  },
+  "configuration": {
+    "quickfixConfig": "config/initiator.cfg",
+    "role": "initiator",
+    "initialSeqNum": 1,
+    "expectedDuration": 30000
+  },
+  "sequence": [
+    {
+      "action": "WAIT_LOGIN",
+      "parameters": {
+        "expectedState": "LOGGED_ON"
+      },
+      "timeout": 10000,
+      "expected": {
+        "sessionState": "LOGGED_ON"
+      }
+    },
+    {
+      "action": "SEND_NEW_ORDER",
+      "parameters": {
+        "clOrdID": "ORDER-2024-001",
+        "symbol": "AAPL",
+        "side": "1",
+        "orderQty": "100",
+        "ordType": "2",
+        "price": "150.50",
+        "timeInForce": "0"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "ORDER-2024-001",
+          "39": "0",
+          "150": "0"
+        }
+      }
+    },
+    {
+      "action": "VERIFY_ORDER_STATUS",
+      "parameters": {
+        "clOrdID": "ORDER-2024-001",
+        "expectedStatus": "NEW"
+      },
+      "timeout": 2000
+    }
+  ]
+}

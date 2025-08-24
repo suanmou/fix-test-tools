@@ -1,0 +1,101 @@
+{
+  "id": "order-005",
+  "name": "复杂订单流程测试",
+  "description": "测试包含多个订单操作的复杂流程",
+  "metadata": {
+    "version": "1.0",
+    "author": "测试团队",
+    "tags": ["order", "complex", "flow"]
+  },
+  "configuration": {
+    "quickfixConfig": "config/initiator.cfg",
+    "role": "initiator",
+    "initialSeqNum": 1,
+    "expectedDuration": 60000
+  },
+  "sequence": [
+    {
+      "action": "WAIT_LOGIN",
+      "parameters": {
+        "expectedState": "LOGGED_ON"
+      },
+      "timeout": 10000
+    },
+    {
+      "action": "SEND_NEW_ORDER",
+      "parameters": {
+        "clOrdID": "ORDER-2024-005-A",
+        "symbol": "NVDA",
+        "side": "1",
+        "orderQty": "100",
+        "ordType": "2",
+        "price": "400.00"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "ORDER-2024-005-A",
+          "39": "0"
+        }
+      }
+    },
+    {
+      "action": "SEND_NEW_ORDER",
+      "parameters": {
+        "clOrdID": "ORDER-2024-005-B",
+        "symbol": "NVDA",
+        "side": "2",
+        "orderQty": "50",
+        "ordType": "2",
+        "price": "405.00"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "ORDER-2024-005-B",
+          "39": "0"
+        }
+      }
+    },
+    {
+      "action": "SEND_MODIFY_ORDER",
+      "parameters": {
+        "clOrdID": "MODIFY-2024-005-A",
+        "origClOrdID": "ORDER-2024-005-A",
+        "symbol": "NVDA",
+        "side": "1",
+        "orderQty": "120",
+        "ordType": "2",
+        "price": "398.50"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "MODIFY-2024-005-A",
+          "39": "5"
+        }
+      }
+    },
+    {
+      "action": "SEND_CANCEL_ORDER",
+      "parameters": {
+        "clOrdID": "CANCEL-2024-005-B",
+        "origClOrdID": "ORDER-2024-005-B",
+        "symbol": "NVDA",
+        "side": "2",
+        "orderQty": "50"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "CANCEL-2024-005-B",
+          "39": "4"
+        }
+      }
+    }
+  ]
+}

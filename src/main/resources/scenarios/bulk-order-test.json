@@ -1,0 +1,62 @@
+{
+  "id": "order-006",
+  "name": "批量订单测试",
+  "description": "测试同时发送多个订单的场景",
+  "metadata": {
+    "version": "1.0",
+    "author": "测试团队",
+    "tags": ["order", "bulk", "multiple"]
+  },
+  "configuration": {
+    "quickfixConfig": "config/initiator.cfg",
+    "role": "initiator",
+    "initialSeqNum": 1,
+    "expectedDuration": 30000
+  },
+  "sequence": [
+    {
+      "action": "WAIT_LOGIN",
+      "parameters": {
+        "expectedState": "LOGGED_ON"
+      },
+      "timeout": 10000
+    },
+    {
+      "action": "SEND_BULK_ORDERS",
+      "parameters": {
+        "orders": [
+          {
+            "clOrdID": "BULK-001",
+            "symbol": "AAPL",
+            "side": "1",
+            "orderQty": "100",
+            "ordType": "2",
+            "price": "155.00"
+          },
+          {
+            "clOrdID": "BULK-002",
+            "symbol": "GOOGL",
+            "side": "2",
+            "orderQty": "25",
+            "ordType": "2",
+            "price": "2800.00"
+          },
+          {
+            "clOrdID": "BULK-003",
+            "symbol": "MSFT",
+            "side": "1",
+            "orderQty": "200",
+            "ordType": "1"
+          }
+        ]
+      },
+      "timeout": 10000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "39": "0"
+        }
+      }
+    }
+  ]
+}

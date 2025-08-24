@@ -1,0 +1,61 @@
+{
+  "id": "order-002",
+  "name": "订单取消测试",
+  "description": "测试取消已创建的订单",
+  "metadata": {
+    "version": "1.0",
+    "author": "测试团队",
+    "tags": ["order", "cancel", "flow"]
+  },
+  "configuration": {
+    "quickfixConfig": "config/initiator.cfg",
+    "role": "initiator",
+    "initialSeqNum": 1,
+    "expectedDuration": 30000
+  },
+  "sequence": [
+    {
+      "action": "WAIT_LOGIN",
+      "parameters": {
+        "expectedState": "LOGGED_ON"
+      },
+      "timeout": 10000
+    },
+    {
+      "action": "SEND_NEW_ORDER",
+      "parameters": {
+        "clOrdID": "ORDER-2024-002",
+        "symbol": "GOOGL",
+        "side": "2",
+        "orderQty": "50",
+        "ordType": "1"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "ORDER-2024-002",
+          "39": "0"
+        }
+      }
+    },
+    {
+      "action": "SEND_CANCEL_ORDER",
+      "parameters": {
+        "clOrdID": "CANCEL-2024-002",
+        "origClOrdID": "ORDER-2024-002",
+        "symbol": "GOOGL",
+        "side": "2",
+        "orderQty": "50"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "CANCEL-2024-002",
+          "39": "4"
+        }
+      }
+    }
+  ]
+}

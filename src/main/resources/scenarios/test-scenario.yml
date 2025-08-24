@@ -1,0 +1,25 @@
+scenario:
+  id: 'SCN_LOGIN_001'
+  name: '正常登录测试'
+  description: '验证客户端能够正常登录到Acceptor'
+  metadata:
+    jira: 'PROJ-123'
+    priority: 'HIGH'
+
+  configuration:
+    quickfix_config: 'config/initiator.cfg'
+    initial_seq_num: 1
+    login_state: 'DISCONNECTED'
+
+  sequence:
+    - action: 'WAIT_LOGIN'
+      timeout: 30000
+      expected:
+        session_state: 'LOGGED_IN'
+
+    - action: 'SEND_HEARTBEAT'
+      parameters:
+        interval: 5000
+      expected:
+        message_type: 'HEARTBEAT'
+        within: 1000

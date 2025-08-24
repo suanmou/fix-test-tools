@@ -1,0 +1,64 @@
+{
+  "id": "order-003",
+  "name": "订单修改测试",
+  "description": "测试修改已创建的订单价格和数量",
+  "metadata": {
+    "version": "1.0",
+    "author": "测试团队",
+    "tags": ["order", "modify", "flow"]
+  },
+  "configuration": {
+    "quickfixConfig": "config/initiator.cfg",
+    "role": "initiator",
+    "initialSeqNum": 1,
+    "expectedDuration": 30000
+  },
+  "sequence": [
+    {
+      "action": "WAIT_LOGIN",
+      "parameters": {
+        "expectedState": "LOGGED_ON"
+      },
+      "timeout": 10000
+    },
+    {
+      "action": "SEND_NEW_ORDER",
+      "parameters": {
+        "clOrdID": "ORDER-2024-003",
+        "symbol": "MSFT",
+        "side": "1",
+        "orderQty": "200",
+        "ordType": "2",
+        "price": "300.00"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "ORDER-2024-003",
+          "39": "0"
+        }
+      }
+    },
+    {
+      "action": "SEND_MODIFY_ORDER",
+      "parameters": {
+        "clOrdID": "MODIFY-2024-003",
+        "origClOrdID": "ORDER-2024-003",
+        "symbol": "MSFT",
+        "side": "1",
+        "orderQty": "150",
+        "ordType": "2",
+        "price": "295.50"
+      },
+      "timeout": 5000,
+      "expected": {
+        "messageType": "8",
+        "fields": {
+          "11": "MODIFY-2024-003",
+          "39": "5"
+        }
+      }
+    }
+  ]
+}

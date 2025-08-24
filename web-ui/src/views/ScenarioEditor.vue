@@ -205,6 +205,8 @@ import QueryStatusForm from '@/components/QueryStatusForm.vue'
 import RequestMarketDataForm from '@/components/RequestMarketDataForm.vue'
 import RiskCheckForm from '@/components/RiskCheckForm.vue'
 import DefaultForm from '@/components/DefaultForm.vue'
+import ExpectedResultForm from '@/components/ExpectedResultForm.vue';
+import EnhancedJsonEditor from '@/components/EnhancedJsonEditor.vue';
 
 export default {
   name: 'ScenarioEditor',
@@ -218,7 +220,9 @@ export default {
     QueryStatusForm,
     RequestMarketDataForm,
     RiskCheckForm,
-    DefaultForm
+    DefaultForm,
+    ExpectedResultForm,
+    EnhancedJsonEditor
   },
   data() {
     return {
@@ -625,22 +629,23 @@ export default {
       return componentMap[action] || 'DefaultForm';
     },
 
+    // 在 methods 中更新 getExpectedFormComponent 方法
     getExpectedFormComponent(action) {
       const componentMap = {
-        'WAIT_LOGIN': 'DefaultForm',
-        'SEND_HEARTBEAT': 'DefaultForm',
-        'SEND_TEST_REQUEST': 'DefaultForm',
-        'SEND_NEW_ORDER': 'ExecutionReportForm',
-        'CANCEL_ORDER': 'ExecutionReportForm',
-        'MODIFY_ORDER': 'ExecutionReportForm',
-        'QUERY_ORDER_STATUS': 'DefaultForm',
-        'WAIT_EXECUTION_REPORT': 'ExecutionReportForm',
-        'WAIT_ORDER_CANCEL_RESPONSE': 'ExecutionReportForm',
-        'WAIT_ORDER_MODIFY_RESPONSE': 'ExecutionReportForm',
-        'REQUEST_MARKET_DATA': 'DefaultForm',
-        'RISK_CHECK': 'DefaultForm',
+        'WAIT_LOGIN': 'ExpectedResultForm',
+        'SEND_HEARTBEAT': 'ExpectedResultForm',
+        'SEND_TEST_REQUEST': 'ExpectedResultForm',
+        'SEND_NEW_ORDER': 'ExpectedResultForm',
+        'CANCEL_ORDER': 'ExpectedResultForm',
+        'MODIFY_ORDER': 'ExpectedResultForm',
+        'QUERY_ORDER_STATUS': 'ExpectedResultForm',
+        'WAIT_EXECUTION_REPORT': 'ExpectedResultForm',
+        'WAIT_ORDER_CANCEL_RESPONSE': 'ExpectedResultForm',
+        'WAIT_ORDER_MODIFY_RESPONSE': 'ExpectedResultForm',
+        'REQUEST_MARKET_DATA': 'ExpectedResultForm',
+        'RISK_CHECK': 'ExpectedResultForm',
       };
-      return componentMap[action] || 'DefaultForm';
+      return componentMap[action] || 'ExpectedResultForm';
     },
 
     // 模板管理
